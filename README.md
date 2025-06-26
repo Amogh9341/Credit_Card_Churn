@@ -1,5 +1,6 @@
 
-# Credit Card Churn Prediction
+# Credit Card Churn Prediction(All below is just rubbish will make a new one)
+
 
 1. Problem Statement
 A bank need to know what set of people are probable of quitting on Credit Card. To ensure that people don't leave and avoid future lossses.
@@ -14,7 +15,9 @@ A bank need to know what set of people are probable of quitting on Credit Card. 
 
    ![image](https://github.com/user-attachments/assets/183757f2-38b7-41cc-b283-1c7364ae7d15)
 
-   <pre> ```def hello(name): print(f"Hello, {name}!") hello("World") ``` </pre>
-
+   ```python
+   # Your code here
+   df.columns
+   ```
 
 
