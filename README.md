@@ -1,10 +1,19 @@
 # Credit Card Churn Prediction Project
 
 ## 1. Executive Summary
+Customer attrition is one of the most pressing threats to long-term profitability in the credit card industry. Acquiring a new customer can cost up to five times more than retaining an existing one. Therefore, understanding which customers are likely to churn—and why—is crucial for effective retention and revenue protection. This project presents an end-to-end customer churn prediction pipeline tailored for the credit card business. The solution combines exploratory data analysis (EDA), business-centric feature engineering, cost-sensitive modeling, and explainable AI (SHAP) to deliver actionable insights and a deployable model that aligns with business impact.
 
-Customer attrition poses a critical revenue threat to credit card businesses. In this project, we develop an end-to-end churn prediction pipeline that enables proactive retention strategies. Using exploratory data analysis (EDA), business-centric feature engineering, cost-sensitive optimization, and explainable AI (SHAP), we built a deployable LightGBM-based model. 
+I used real-world credit card customer data to explore behavioral patterns, usage metrics, and demographic signals that influence churn. Our EDA uncovered strong churn predictors such as transaction inactivity, low card utilization, and low engagement across bank relationships. These insights guided a targeted feature engineering phase, where ratio-based and customer-centric features were created to enhance signal strength.
 
-Through cost-based recursive feature elimination and guesstimate-informed thresholds, we reduced business loss from ₹30,000 to ₹7,442, cutting estimated churn cost by **~75%**. A custom Streamlit dashboard was created for Customer Service teams to interact with model predictions, view customer profiles, and interpret SHAP explanations for better decision-making.
+To prioritize business value over abstract model accuracy, we designed a cost matrix using guesstimates of customer lifetime value (CLV) and campaign costs. This matrix was used to:
+* Guide Recursive Feature Elimination (RFE) for removing features with low business impact.
+* Tune the model's prediction threshold to reduce the overall financial loss from incorrect predictions.
+
+The resulting LightGBM model achieved a 75% reduction in business loss, bringing the expected cost of misclassification down from ₹30,000 to ₹7,442. This optimization was driven not just by improving precision or recall but by aligning the model’s behavior with business economics. To ensure transparency and adoption by non-technical teams, we incorporated SHAP (SHapley Additive exPlanations) to explain each individual prediction. This allows the Customer Support and Marketing teams to understand the "why" behind each churn risk score and tailor retention actions accordingly. Finally, the pipeline was deployed as a custom Streamlit dashboard designed for use by customer-facing teams. The application allows users to:
+* Input or search for customer profiles,
+* View churn probability scores and alerts,
+* Explore top contributing factors through SHAP visualizations, and
+* Make informed, data-driven retention decisions.
 
 ---
 
@@ -65,7 +74,9 @@ I followed the CRISP-DM framework:
 - Women overrepresented in unknown income category and platinum card usage.
 
 #### Plots:
-<img src="../images/Gender.png" width="24%" /> <img src="../images/gender_by_income_level.png" width="24%" /> <img src="../images/gender_by_card_type.png" width="24%" /> <img src="../images/Platinum card by gender,income category.png" width="24%" />
+<img src="images/Gender.png" width="100%" />
+
+<img src="images/gender_by_income_level.png" width="33%" /> <img src="images/gender_by_card_type.png" width="33%" /> <img src="images/Platinum card by gender,income category.png" width="30%" />
 
 ---
 
@@ -75,7 +86,7 @@ I followed the CRISP-DM framework:
 - Silver cards performed best; Gold was underutilized.
 
 #### Plot:
-<img src="../images/Churn_Probability_across_card_category.png" width="60%" />
+<img src="images/Churn Probability across card category.png" width="60%" />
 
 ---
 
@@ -90,7 +101,7 @@ I followed the CRISP-DM framework:
 - Higher contact counts correlated with increased churn risk.
 
 #### Plot:
-<img src="../images/Churn_Probability_by_Contacts%20Count.png" width="60%" />
+<img src="images/Churn Probability by Contacts Count.png" width="60%" />
 
 ---
 
@@ -100,7 +111,7 @@ I followed the CRISP-DM framework:
 - Month 4 had the sharpest churn spike.
 
 #### Plots:
-<img src="../images/Distribution_of_Customers_by_Months_Inactive.png" width="49%" /> <img src="../images/Churn_Probability_by_Months_Inactive.png" width="49%" />
+<img src="images/Distribution of Customers by Months Inactive.png" width="49%" /> <img src="images/Churn Probability by Months Inactive.png" width="49%" />
 
 ---
 
@@ -110,7 +121,7 @@ I followed the CRISP-DM framework:
 - Engineered features amplified churn separability.
 
 #### Plots:
-<img src="../images/Numeric_Conti_a.png" width="32%" /> <img src="../images/Numeric_Conti_b.png" width="32%" /> <img src="../images/Numeric_Conti_c.png" width="32%" />
+<img src="images/Numeric_Conti_a.png" width="32%" /> <img src="images/Numeric_Conti_b.png" width="32%" /> <img src="images/Numeric_Conti_c.png" width="32%" />
 
 ---
 
@@ -136,12 +147,12 @@ I followed the CRISP-DM framework:
 
 **Top Features** :
 - `Total_Trans_Ct`, `Total_Trans_Amt`, `Avg_Utilization_Ratio`, `Trans_Amt_per_Trans_Ct`
-![SHAP Summary Bar Plot](../images/shap_summary_bar.png)
+![SHAP Summary Bar Plot](images/shap_summary_bar.png)
 
 **Beeswarm Plot** :
 - High transaction activity reduces churn risk.
 - Low engagement indicators push the model toward churn prediction.
-![SHAP Summary Plot](../images/shap_summary.png)
+![SHAP Summary Plot](images/shap_summary.png)
 
 ---
 
@@ -168,7 +179,7 @@ Assumed margin = 5%
 
 - Final threshold chosen to minimize expected cost.
 - Led to **75% reduction** in estimated churn-related losses.
-![Threshold vs. Cost Curve](../images/threshold_cost_curve.png)
+![Threshold vs. Cost Curve](images/threshold_cost_curve.png)
 
 ---
 
@@ -249,13 +260,26 @@ The final solution includes an interactive web application built with **Streamli
   - Global feature importance
   - Individual-level SHAP waterfall plots
   - Explains why a specific customer is at risk  
-    ![Waterfall Example](../images/image1.png)
+    ![Waterfall Example](images/image1.png)
 - **Customer Profile Viewer:**  
-    ![Customer Info](../images/image.png)
+    ![Customer Info](images/image.png)
 
 ---
 
-## App Structure & Usage
+## 12. App Structure & Usage
 
-### File Structure (Partial)
+pip install -r requirements.txt
+
+cd app
+
+streamlit run app.py
+
+uvicorn backend:app --reload
+
+
+---
+## 13. Contact Me
+Email: amogh2048@gmail.com 
+LinkedIn: linkedin.com/in/amogh-kahalekar
+Instagram: @amoghkahalekar
 
