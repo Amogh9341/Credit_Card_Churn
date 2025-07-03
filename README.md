@@ -280,6 +280,16 @@ uvicorn backend:app --reload
 ---
 ## 13. Contact Me
 Email: amogh2048@gmail.com 
+
 LinkedIn: linkedin.com/in/amogh-kahalekar
+
 Instagram: @amoghkahalekar
+
+
+---
+## 14. Dataset Link
+
+The dataset was collected from kaggle.
+
+Link: https://www.kaggle.com/datasets/sakshigoyal7/credit-card-customers?sort=votes
 
