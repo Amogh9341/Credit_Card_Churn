@@ -269,8 +269,11 @@ The final solution includes an interactive web application built with **Streamli
 ## 12. App Structure & Usage
 
 pip install -r requirements.txt
+
 cd app
+
 streamlit run app.py
+
 uvicorn backend:app --reload
 
 
