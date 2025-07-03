@@ -65,7 +65,7 @@ I followed the CRISP-DM framework:
 - Women overrepresented in unknown income category and platinum card usage.
 
 #### Plots:
-<img src="../images/Gender.png" width="24%" /> <img src="../images/gender_by_income_level.png" width="24%" /> <img src="../images/gender_by_card_type.png" width="24%" /> <img src="../images/Platinum card by gender,income category.png" width="24%" />
+<img src="images/Gender.png" width="24%" /> <img src="images/gender_by_income_level.png" width="24%" /> <img src="images/gender_by_card_type.png" width="24%" /> <img src="images/Platinum card by gender,income category.png" width="24%" />
 
 ---
 
@@ -75,7 +75,7 @@ I followed the CRISP-DM framework:
 - Silver cards performed best; Gold was underutilized.
 
 #### Plot:
-<img src="../images/Churn_Probability_across_card_category.png" width="60%" />
+<img src="images/Churn_Probability_across_card_category.png" width="60%" />
 
 ---
 
@@ -90,7 +90,7 @@ I followed the CRISP-DM framework:
 - Higher contact counts correlated with increased churn risk.
 
 #### Plot:
-<img src="../images/Churn_Probability_by_Contacts%20Count.png" width="60%" />
+<img src="images/Churn_Probability_by_Contacts%20Count.png" width="60%" />
 
 ---
 
@@ -100,7 +100,7 @@ I followed the CRISP-DM framework:
 - Month 4 had the sharpest churn spike.
 
 #### Plots:
-<img src="../images/Distribution_of_Customers_by_Months_Inactive.png" width="49%" /> <img src="../images/Churn_Probability_by_Months_Inactive.png" width="49%" />
+<img src="images/Distribution_of_Customers_by_Months_Inactive.png" width="49%" /> <img src="images/Churn_Probability_by_Months_Inactive.png" width="49%" />
 
 ---
 
@@ -110,7 +110,7 @@ I followed the CRISP-DM framework:
 - Engineered features amplified churn separability.
 
 #### Plots:
-<img src="../images/Numeric_Conti_a.png" width="32%" /> <img src="../images/Numeric_Conti_b.png" width="32%" /> <img src="../images/Numeric_Conti_c.png" width="32%" />
+<img src="images/Numeric_Conti_a.png" width="32%" /> <img src="images/Numeric_Conti_b.png" width="32%" /> <img src="images/Numeric_Conti_c.png" width="32%" />
 
 ---
 
@@ -136,12 +136,12 @@ I followed the CRISP-DM framework:
 
 **Top Features** :
 - `Total_Trans_Ct`, `Total_Trans_Amt`, `Avg_Utilization_Ratio`, `Trans_Amt_per_Trans_Ct`
-![SHAP Summary Bar Plot](../images/shap_summary_bar.png)
+![SHAP Summary Bar Plot](images/shap_summary_bar.png)
 
 **Beeswarm Plot** :
 - High transaction activity reduces churn risk.
 - Low engagement indicators push the model toward churn prediction.
-![SHAP Summary Plot](../images/shap_summary.png)
+![SHAP Summary Plot](images/shap_summary.png)
 
 ---
 
@@ -168,7 +168,7 @@ Assumed margin = 5%
 
 - Final threshold chosen to minimize expected cost.
 - Led to **75% reduction** in estimated churn-related losses.
-![Threshold vs. Cost Curve](../images/threshold_cost_curve.png)
+![Threshold vs. Cost Curve](images/threshold_cost_curve.png)
 
 ---
 
@@ -249,9 +249,9 @@ The final solution includes an interactive web application built with **Streamli
   - Global feature importance
   - Individual-level SHAP waterfall plots
   - Explains why a specific customer is at risk  
-    ![Waterfall Example](../images/image1.png)
+    ![Waterfall Example](images/image1.png)
 - **Customer Profile Viewer:**  
-    ![Customer Info](../images/image.png)
+    ![Customer Info](images/image.png)
 
 ---
 
