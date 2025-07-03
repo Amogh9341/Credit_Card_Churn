@@ -4,27 +4,33 @@ import joblib
 import pandas as pd
 import numpy as np
 import shap
+import json
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 
-# === Load Model and Scaler ===
-model = joblib.load("../model/churn_model.pkl")  # Ensure file is in same folder
-scaler = joblib.load("../model/scaler.pkl")
+# === Load Model and Prepocessor ===
+preprocessor = joblib.load('../artifacts/preprocessor.pkl')
+model = joblib.load('../artifacts/churn_model.pkl')
+with open('../artifacts/threshold.json') as f:
+    threshold = json.load(f)['optimal_threshold']
+with open('../artifacts/not_selected_feature_but_need_for_preprocessor.json') as f:
+    extras = json.load(f)
+with open('../artifacts/all_features.json') as f:
+    all_features = json.load(f)
+# Load feature order for consistent column selection
+with open('../artifacts/feature_order.json') as f:
+    feature_order = json.load(f)
 
-# === Columns to Scale ===
-SCALE_FEATURES = [
-    'Customer_Age', 'Months_on_book', 'Total_Relationship_Count',
-    'Months_Inactive_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
-    'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
-    'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio',
-    'Contacts_Count_12_mon', 'Avg_Trans_Amt', 'Monthly_Rev_Bal'
-]
-
-# === Input Data Format ===
 class ChurnInput(BaseModel):
     Customer_Age: int
     Gender: int
     Dependent_count: int
+    Education_Level: str
+    Marital_Status: str
+    Income_Category: str
+    Card_Category: str
     Months_on_book: int
     Total_Relationship_Count: int
     Months_Inactive_12_mon: int
@@ -37,39 +43,55 @@ class ChurnInput(BaseModel):
     Total_Trans_Ct: int
     Total_Ct_Chng_Q4_Q1: float
     Avg_Utilization_Ratio: float
-    Marital_Status_Divorced: int
-    Marital_Status_Married: int
-    Marital_Status_Single: int
-    Avg_Trans_Amt: float
-    Monthly_Rev_Bal: float
-    Engagement_Drop: float
-    Spending_Drop: float
+    Trans_Amt_per_Trans_Ct: float
+    Trans_Amt_per_Rev_Bal: float
+    Trans_Amt_per_Open_To_Buy: float
+    Trans_Amt_per_Contacts: float
+    Trans_Amt_per_Inactive: float
+    Trans_Amt_per_Relationship: float
+    Trans_Amt_per_Dependent: float
+    Rev_Bal_per_Contacts: float
+    Rev_Bal_per_Relationship: float
+    Credit_Limit_per_Trans_Ct: float
+    Credit_Limit_per_Inactive: float
+    Credit_Limit_per_Relationship: float
+    Credit_Limit_per_Dependent: float
+    Amt_Chng_per_Trans_Ct: float
+    Amt_Chng_per_Contacts: float
+    Amt_Chng_per_Inactive: float
+    Amt_Chng_per_Relationship: float
+    Amt_Chng_per_Dependent: float
+    Trans_Ct_per_Dependent: float
+    Trans_Ct_per_Months_Inactive: float
+    Trans_Ct_per_Relationship: float
+    Sum_Trans_Amt_Rev_Bal: float
+    Sum_Trans_Amt_Open_To_Buy: float
 
-# === Preprocessing Function ===
-def preprocess_input(data_dict):
-    df = pd.DataFrame([data_dict])
-    df_scaled = df.copy()
-    df_scaled[SCALE_FEATURES] = scaler.transform(df[SCALE_FEATURES])
-    return df_scaled
-
+def preprocess_input(data):
+    input_data = data.dict()
+    for feature in extras:
+        if feature not in input_data:
+            input_data[feature] = 0
+    X_full = preprocessor.transform(pd.DataFrame([input_data]))
+    X = pd.DataFrame(X_full, columns=list(all_features))
+    return X[feature_order]
 # === Predict Route ===
 @app.post("/predict")
 def predict_churn(data: ChurnInput):
-    processed_df = preprocess_input(data.model_dump())
-    input_array = processed_df.values
-    prob = model.predict_proba(input_array)[0][1]
-    return {"churn_probability": float(prob)}
+    X_selected = preprocess_input(data)
+    prob = model.predict_proba(X_selected)[:, 1][0]
+    churn = int(prob > threshold)
+    return {'prediction': churn, 'probability': prob}
 
-# === SHAP Explainer ===
-explainer = shap.TreeExplainer(model)
 
 # === SHAP Explain Route ===
 @app.post("/explain")
 def explain_churn(data: ChurnInput):
-    input_df = preprocess_input(data.model_dump())
+    df = preprocess_input(data)
+    input_df = pd.DataFrame(df,columns=feature_order)
+    explainer = shap.Explainer(model)
     shap_values = explainer(input_df)
 
-    # Handle binary classifier SHAP output
     shap_contributions = shap_values.values[0]
     if shap_contributions.ndim > 1:
         shap_contributions = shap_contributions[:, 1]

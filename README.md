@@ -1,23 +1,261 @@
+# Credit Card Churn Prediction Project
 
-# Credit Card Churn Prediction(All below is just rubbish will make a new one)
+## 1. Executive Summary
+
+Customer attrition poses a critical revenue threat to credit card businesses. In this project, we develop an end-to-end churn prediction pipeline that enables proactive retention strategies. Using exploratory data analysis (EDA), business-centric feature engineering, cost-sensitive optimization, and explainable AI (SHAP), we built a deployable LightGBM-based model. 
+
+Through cost-based recursive feature elimination and guesstimate-informed thresholds, we reduced business loss from ₹30,000 to ₹7,442, cutting estimated churn cost by **~75%**. A custom Streamlit dashboard was created for Customer Service teams to interact with model predictions, view customer profiles, and interpret SHAP explanations for better decision-making.
+
+---
+
+## 2. Problem Statement
+
+A bank manager is troubled with customers quitting on credit card services. The goal is to predict which customers are likely to churn so proactive steps can be taken to retain them.
+
+### Project Aim
+
+1. Predict the probability of churn for each customer.
+2. Identify key reasons behind churn using model interpretability.
+
+### Why Probability?
+
+- Enables flexible thresholding based on cost, risk, and card type.
+- Allows ranking customers for targeted retention efforts.
+
+### Benefits of the Project
+
+- Improved customer experience and retention
+- Revenue protection and churn cost minimization
+- Targeted marketing strategies
+- Reduced marketing spend and operational costs
+
+---
+
+## 3. Skills Demonstrated
+
+- **Data Analysis & Visualization:** `pandas`, `matplotlib`, `seaborn`
+- **Machine Learning & Feature Selection:** `sklearn`, `LightGBM`, `RFE`
+- **Explainability:** `SHAP`
+- **Cost-Based Guesstimation & Business Modeling**
+- **Model Deployment:** `Streamlit`, `FastAPI`
+- **Version Control & Project Structuring:** `Git`, `GitHub`, `VSCode`
+- **End-to-End Pipeline Design**
+- **Soft Skills:** Business problem understanding, assumption-based modeling, storytelling
+
+---
+
+## 4. Methodology Summary
+
+I followed the CRISP-DM framework:
+
+1. **Business Understanding:** Churned customers affect revenue. Need to predict churn risk early.
+2. **Data Understanding & Preparation:** Exploratory analysis, feature cleaning, missing handling.
+3. **Feature Engineering:** Created over 15+ ratio/sum-based business features.
+4. **Modeling:** LightGBM, cost matrix–based feature selection, threshold tuning.
+5. **Evaluation:** Standard metrics + cost-based decision optimization.
+6. **Deployment:** Streamlit dashboard with interpretability tools.
+
+---
+
+## 5. Key Findings from EDA
+
+### Gender Analysis
+
+- Women had higher churn rates despite higher transaction activity.
+- Women overrepresented in unknown income category and platinum card usage.
+
+#### Plots:
+<img src="../images/Gender.png" width="24%" /> <img src="../images/gender_by_income_level.png" width="24%" /> <img src="../images/gender_by_card_type.png" width="24%" /> <img src="../images/Platinum card by gender,income category.png" width="24%" />
+
+---
+
+### Card Category
+
+- `premium_flag` feature revealed Platinum cardholders had the highest churn risk.
+- Silver cards performed best; Gold was underutilized.
+
+#### Plot:
+<img src="../images/Churn_Probability_across_card_category.png" width="60%" />
+
+---
+
+### Relationship Count
+
+- Customers with <3 relationships had double the churn rate.
+
+---
+
+### Contact Count & Service Quality
+
+- Higher contact counts correlated with increased churn risk.
+
+#### Plot:
+<img src="../images/Churn_Probability_by_Contacts%20Count.png" width="60%" />
+
+---
+
+### Inactive Months
+
+- 3+ months of inactivity significantly increased churn probability.
+- Month 4 had the sharpest churn spike.
+
+#### Plots:
+<img src="../images/Distribution_of_Customers_by_Months_Inactive.png" width="49%" /> <img src="../images/Churn_Probability_by_Months_Inactive.png" width="49%" />
+
+---
+
+### Numeric Continuous Features
+
+- Strong churn indicators: Total transaction count/amount, utilization ratio, revolving balance.
+- Engineered features amplified churn separability.
+
+#### Plots:
+<img src="../images/Numeric_Conti_a.png" width="32%" /> <img src="../images/Numeric_Conti_b.png" width="32%" /> <img src="../images/Numeric_Conti_c.png" width="32%" />
+
+---
+
+## 6. Modeling Outcomes
+
+- Final model: **LightGBM**, trained on cost-optimized features.
+- Class imbalance addressed using class weights.
+- Recursive Feature Elimination (RFE) performed using business cost matrix.
+- **SHAP** used to evaluate feature contribution.
+
+### Final Performance
+
+| Metric               | Value        |
+|----------------------|--------------|
+| ROC-AUC              | ~0.99        |
+| Business Cost Saved  | ₹22,558      |
+| Final Loss Estimate  | ₹7,442       |
+| Initial Estimate     | ₹30,000      |
+
+---
+
+### SHAP Analysis
+
+**Top Features** :
+- `Total_Trans_Ct`, `Total_Trans_Amt`, `Avg_Utilization_Ratio`, `Trans_Amt_per_Trans_Ct`
+![SHAP Summary Bar Plot](../images/shap_summary_bar.png)
+
+**Beeswarm Plot** :
+- High transaction activity reduces churn risk.
+- Low engagement indicators push the model toward churn prediction.
+![SHAP Summary Plot](../images/shap_summary.png)
+
+---
+
+## 7. Cost-Based Optimization Strategy
+
+Instead of optimizing solely on accuracy, I optimized the model on **cost**, using:
+
+### Guesstimate-Based Assumptions
+
+- **False Negatives (missed churners):** Loss = Customer Lifetime Value (CLV)
+- **False Positives (wrongly flagged loyal users):** Loss = Marketing Spend
+
+| Card Category | FN Cost (CLV) | FP Cost (Marketing Spend) |
+|---------------|----------------|-----------------------------|
+| Blue          | ₹212.68        | ₹50                        |
+| Silver        | ₹338.02        | ₹100                       |
+| Gold          | ₹366.75        | ₹200                       |
+| Platinum      | ₹446.88        | ₹300                       |
+
+CLV = Avg Monthly Spend × Margin × Tenure  
+Assumed margin = 5%
+
+### Outcome
+
+- Final threshold chosen to minimize expected cost.
+- Led to **75% reduction** in estimated churn-related losses.
+![Threshold vs. Cost Curve](../images/threshold_cost_curve.png)
+
+---
+
+## 8. Actionable Recommendations
+
+- **Boost relationship count** for customers with <3 accounts.
+- **Offer retention incentives** to high-spending Platinum customers.
+- **Target women in low-income segments** with higher credit limits and offers.
+- **Monitor inactivity closely** and trigger automated interventions at month 3.
+- **Reduce unnecessary customer contacts** via improved self-service portals.
+
+---
+
+## 9. Estimated Business Impact
+
+- **Business Cost Reduction:**  
+  Initial churn-related cost estimate = ₹30,000  
+  Final cost post-optimization = ₹7,442  
+  **→ Cost savings of ₹22,558 (~75%)**
+
+- **Retention Efficiency:**  
+  Focused targeting using churn probability + cost thresholds enables:
+  - Better resource allocation (especially for premium card tiers)
+  - Reduced retention campaign wastage
+
+- **Customer Engagement:**  
+  Streamlit dashboard with explainability builds trust with internal teams, improves support agent decisions, and enables:
+  - Transparent churn reasoning for non-technical staff
+  - Direct link between model output and actionable customer features
+
+- **Scalable Deployment:**  
+  With integrated FastAPI backend and modular pipeline, the solution can be scaled for future datasets and integrated with CRM systems.
+
+---
+
+## 10. Limitations and Next Steps
+
+### Limitations
+
+- **Static Dataset:**  
+  Dataset is not time-series based, limiting understanding of customer evolution over time.
+
+- **Business Assumptions:**  
+  CLV, revenue margins, and marketing spend are **guesstimates** and may not fully reflect actual costs or profit margins.
+
+- **Lack of Real-time Data:**  
+  Transaction data is **historical** and not connected to real-time customer activity streams.
+
+- **Unstructured Data Excluded:**  
+  No sentiment analysis, customer complaints, or call transcripts are used.
+
+### Next Steps
+
+- **Temporal Modeling:**  
+  Explore **sequence models (e.g., LSTM, Transformers)** for better churn trajectory modeling over time.
+
+- **Business Integration:**  
+  Plug model into CRM pipelines and validate predictions with actual churn cases.
+
+- **Retention Strategy Testing:**  
+  Conduct **A/B testing** on multiple customer segments to test different interventions.
+
+- **Alerting System:**  
+  Build an **alert dashboard** for customer support agents to act when churn probability > threshold.
+
+- **Data Expansion:**  
+  Incorporate behavioral/sentiment/interaction data for deeper signals of dissatisfaction.
+
+---
 
 
-1. Problem Statement
-A bank need to know what set of people are probable of quitting on Credit Card. To ensure that people don't leave and avoid future lossses.
+## 11. Dashboard Explainability (Streamlit App)
 
-2. About Dataset
-   <table border="1" class="dataframe"><thead><tr style="text-align: right;"><th></th><th>Attrition_Flag</th><th>Customer_Age</th><th>Gender</th><th>Dependent_count</th><th>Education_Level</th><th>Marital_Status</th><th>Income_Category</th><th>Card_Category</th><th>Months_on_book</th><th>Total_Relationship_Count</th><th>Months_Inactive_12_mon</th><th>Contacts_Count_12_mon</th><th>Credit_Limit</th><th>Total_Revolving_Bal</th><th>Avg_Open_To_Buy</th><th>Total_Amt_Chng_Q4_Q1</th><th>Total_Trans_Amt</th><th>Total_Trans_Ct</th><th>Total_Ct_Chng_Q4_Q1</th><th>Avg_Utilization_Ratio</th></tr></thead><tbody><tr><th>0</th><td>Existing Customer</td><td>45</td><td>M</td><td>3</td><td>High School</td><td>Married</td><td>$60K - $80K</td><td>Blue</td><td>39</td><td>5</td><td>1</td><td>3</td><td>12691.0</td><td>777</td><td>11914.0</td><td>1.335</td><td>1144</td><td>42</td><td>1.625</td><td>0.061</td></tr><tr><th>1</th><td>Existing Customer</td><td>49</td><td>F</td><td>5</td><td>Graduate</td><td>Single</td><td>Less than $40K</td><td>Blue</td><td>44</td><td>6</td><td>1</td><td>2</td><td>8256.0</td><td>864</td><td>7392.0</td><td>1.541</td><td>1291</td><td>33</td><td>3.714</td><td>0.105</td></tr><tr><th>2</th><td>Existing Customer</td><td>51</td><td>M</td><td>3</td><td>Graduate</td><td>Married</td><td>$80K - $120K</td><td>Blue</td><td>36</td><td>4</td><td>1</td><td>0</td><td>3418.0</td><td>0</td><td>3418.0</td><td>2.594</td><td>1887</td><td>20</td><td>2.333</td><td>0.000</td></tr><tr><th>3</th><td>Existing Customer</td><td>40</td><td>F</td><td>4</td><td>High School</td><td>Unknown</td><td>Less than $40K</td><td>Blue</td><td>34</td><td>3</td><td>4</td><td>1</td><td>3313.0</td><td>2517</td><td>796.0</td><td>1.405</td><td>1171</td><td>20</td><td>2.333</td><td>0.760</td></tr><tr><th>4</th><td>Existing Customer</td><td>40</td><td>M</td><td>3</td><td>Uneducated</td><td>Married</td><td>$60K - $80K</td><td>Blue</td><td>21</td><td>5</td><td>1</td><td>0</td><td>4716.0</td><td>0</td><td>4716.0</td><td>2.175</td><td>816</td><td>28</td><td>2.500</td><td>0.000</td></tr></tbody></table></div>
-    a. Dataset is imbalanced number of Attrited Customers is too less than who stayed  
-    
-    ![image](https://github.com/user-attachments/assets/7863bb12-bb0a-4bad-9c23-f8993d725341)
-   
-    b. Credit Limit and Average Open to Buy are very closely co-related thus keepin gonly one of them is enough.
+The final solution includes an interactive web application built with **Streamlit**. Key features include:
 
-   ![image](https://github.com/user-attachments/assets/183757f2-38b7-41cc-b283-1c7364ae7d15)
+- **Churn Probability:** Real-time churn prediction per customer.
+- **SHAP Interpretability:**
+  - Global feature importance
+  - Individual-level SHAP waterfall plots
+  - Explains why a specific customer is at risk  
+    ![Waterfall Example](../images/image1.png)
+- **Customer Profile Viewer:**  
+    ![Customer Info](../images/image.png)
 
-   ```python
-   # Your code here
-   df.columns
-   ```
+---
 
+## App Structure & Usage
+
+### File Structure (Partial)
 
