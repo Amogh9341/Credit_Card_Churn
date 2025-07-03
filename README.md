@@ -121,7 +121,7 @@ I followed the CRISP-DM framework:
 - Engineered features amplified churn separability.
 
 #### Plots:
-<img src="images/Numeric_Conti_a.png" width="32%" /> <img src="images/Numeric_Conti_b.png" width="32%" /> <img src="images/Numeric_Conti_c.png" width="32%" />
+<img src="images/Numeric_Conti_a.png" width="100%" /> <img src="images/Numeric_Conti_b.png" width="100%" /> <img src="images/Numeric_Conti_c.png" width="100%" />
 
 ---
 
